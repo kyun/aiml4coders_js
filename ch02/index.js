@@ -1,7 +1,7 @@
 import tf from "@tensorflow/tfjs-node";
 
 // get fashion mnist data
-const data = tf.data.csv(
+const trainingData = tf.data.csv(
   "https://media.githubusercontent.com/media/fpleoni/fashion_mnist/master/fashion-mnist_train.csv",
   {
     columnConfigs: {
@@ -12,11 +12,27 @@ const data = tf.data.csv(
   }
 );
 
-console.log(data);
-const columnNames = await data.columnNames();
-const rowCount = await data.rowCount();
-console.log(columnNames);
-console.log(rowCount);
+// use toArray() to convert the data to an array
+const trainingDataArray = await trainingData.toArray();
+// const trainingLabels = trainingDataArray.map((e) => e.ys.label);
+const trainingImages = trainingDataArray.map((e) => Object.values(e.xs));
+console.dir(trainingImages, { maxArrayLength: null });
+
+// const testData = tf.data.csv(
+//   "https://media.githubusercontent.com/media/fpleoni/fashion_mnist/master/fashion-mnist_test.csv",
+//   {
+//     columnConfigs: {
+//       label: {
+//         isLabel: true,
+//       },
+//     },
+//   }
+// );
+// const testDataArray = await testData.toArray();
+// const testLabels = testDataArray.map((e) => e.ys.label);
+// const testImages = testDataArray.map((e) =>
+//   Object.values(e.xs).map((i) => i / 255)
+// );
 
 const model = tf.sequential();
 model.add(tf.layers.flatten({ inputShape: [28, 28, 1] })); // 입력을 위한 레이어
@@ -44,8 +60,9 @@ model.compile({
   loss: "sparseCategoricalCrossentropy",
   metrics: ["accuracy"],
 });
-
-// model.fit(inputs, outputs, { epochs: 5 }).then(() => {
-//   // model.predict(testImages).print();
+// model.fit(trainingImages, trainingLabels, { epochs: 5 }).then(() => {
 //   console.log("Done");
 // });
+
+// const testResult = model.evaluate(testImages, testLabels);
+// console.log(testResult);
