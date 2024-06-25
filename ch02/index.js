@@ -9,7 +9,7 @@ const trainingData = tf.data.csv(
         isLabel: true,
       },
     },
-  }
+  },
 );
 
 // use toArray() to convert the data to an array
